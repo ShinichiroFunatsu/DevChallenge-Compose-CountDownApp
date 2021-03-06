@@ -15,7 +15,6 @@
  */
 package com.example.androiddevchallenge.ui.keypad
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +33,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -46,12 +43,10 @@ import com.example.androiddevchallenge.model.Time
 import com.example.androiddevchallenge.ui.util.getOrZero
 import com.example.androiddevchallenge.ui.util.pop
 import com.example.androiddevchallenge.ui.util.push
-import java.util.Stack
 
 @Composable
 fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (Time) -> Unit) {
-    val timeStack by remember { mutableStateOf(Stack<Int>().toMutableStateList()) }
-    Log.d("test", "stack=$timeStack")
+    val timeStack = remember { mutableStateListOf<Int>() }
     Column(
         modifier = modifier,
     ) {
@@ -76,7 +71,6 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (Time) -> Unit) {
             )
             Spacer(modifier = Modifier.weight(1f))
         }
-
         Spacer(modifier = Modifier.weight(1f))
         Divider()
         Spacer(modifier = Modifier.weight(1f))
