@@ -79,7 +79,7 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (Time) -> Unit) {
                 .fillMaxWidth()
                 .padding(vertical = 20.dp),
             onClickKey = {
-                if (timeStack.size < 6 && (timeStack.size == 0 && it == 0).not()) {
+                if (timeStack.size < 6 && (timeStack.size != 0 || it != 0)) {
                     timeStack.push(it)
                 }
             },
