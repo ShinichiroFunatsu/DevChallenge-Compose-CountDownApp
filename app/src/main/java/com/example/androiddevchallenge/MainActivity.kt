@@ -29,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.androiddevchallenge.model.RawTime
+import com.example.androiddevchallenge.ui.countdown.CountDown
 import com.example.androiddevchallenge.ui.keypad.TimeKeyPad
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
@@ -45,16 +47,30 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun MyApp() {
-    val isTimeEdit = remember { mutableStateOf(true) }
+    val (isTimeEdit, setIsTimeEdit) = remember { mutableStateOf(true) }
+    val (time, setTime) = remember { mutableStateOf(RawTime(0, 0, 0)) }
     Surface(color = MaterialTheme.colors.background) {
-        Crossfade(targetState = isTimeEdit) { value ->
-            if (value.value) {
+        Crossfade(targetState = isTimeEdit) {
+            if (it) {
                 TimeKeyPad(
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .fillMaxSize(),
-                    onStart = {
+                    onStart = { time ->
+                        setIsTimeEdit(false)
+                        setTime(time)
                     },
+                )
+            } else {
+                CountDown(
+                    defaultRawTime = time,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .fillMaxSize(),
+                    onSetTimeClick = {
+                        setIsTimeEdit(true)
+                        setTime(RawTime(0, 0, 0))
+                    }
                 )
             }
         }

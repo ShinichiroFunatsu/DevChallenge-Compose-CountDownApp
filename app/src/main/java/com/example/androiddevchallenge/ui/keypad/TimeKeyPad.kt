@@ -39,13 +39,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.example.androiddevchallenge.model.Time
+import com.example.androiddevchallenge.model.RawTime
 import com.example.androiddevchallenge.ui.util.getOrZero
 import com.example.androiddevchallenge.ui.util.pop
 import com.example.androiddevchallenge.ui.util.push
 
 @Composable
-fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (Time) -> Unit) {
+fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (RawTime) -> Unit = {}) {
     val timeStack = remember { mutableStateListOf<Int>() }
     Column(
         modifier = modifier,
@@ -92,7 +92,7 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (Time) -> Unit) {
         ) {
             FloatingActionButton(
                 modifier = Modifier.align(Alignment.Center),
-                onClick = { onStart(Time.create(timeStack)) }
+                onClick = { onStart(RawTime.create(timeStack)) }
             ) {
                 Icon(
                     imageVector = Icons.Outlined.PlayArrow,
