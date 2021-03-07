@@ -65,7 +65,6 @@ fun MyApp() {
                 CountDown(
                     defaultRawTime = time,
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
                         .fillMaxSize(),
                     onSetTimeClick = {
                         setIsTimeEdit(true)

@@ -97,6 +97,7 @@ fun CountDown(
     CountDown(
         time = time,
         modifier = modifier,
+        totalPercent = time.totalSeconds / defaultRawTime.totalSeconds.toFloat(),
         isRunning = isRunning,
         onStartClick = {
             isRunning = true
@@ -117,6 +118,7 @@ fun CountDown(
 private fun CountDown(
     time: Time,
     modifier: Modifier = Modifier,
+    totalPercent: Float,
     isRunning: Boolean,
     onStartClick: () -> Unit,
     onStopClick: () -> Unit,
@@ -127,7 +129,8 @@ private fun CountDown(
             time = time,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1f),
+            totalPercent = totalPercent,
         )
         Row(modifier = Modifier.fillMaxWidth()) {
             SetButton(
@@ -194,14 +197,20 @@ private fun StartOrStopFab(
 }
 
 @Composable
-private fun ClockDial(time: Time, modifier: Modifier) {
+private fun ClockDial(
+    time: Time,
+    modifier: Modifier,
+    totalPercent: Float,
+    offsetY: Float = 200f
+) {
     Box(modifier = modifier) {
-        ArcNumberList(9, time.seconds % 10, 310f, 10f)
-        ArcNumberList(5, time.seconds / 10, 280f, 10f)
-        ArcNumberList(9, time.minutes % 10, 240f, 10f)
-        ArcNumberList(5, time.minutes / 10, 210f, 10f)
-        ArcNumberList(9, time.hours % 10, 170f, 10f)
-        ArcNumberList(9, time.hours / 10, 140f, 10f)
+        ArcNumberList(9, time.seconds % 10, 310f, 10f, offsetY)
+        ArcNumberList(5, time.seconds / 10, 280f, 10f, offsetY)
+        ArcNumberList(9, time.minutes % 10, 240f, 10f, offsetY)
+        ArcNumberList(5, time.minutes / 10, 210f, 10f, offsetY)
+        ArcNumberList(9, time.hours % 10, 170f, 10f, offsetY)
+        ArcNumberList(9, time.hours / 10, 140f, 10f, offsetY)
+        PiProgress(offsetY, totalPercent)
     }
 }
 
@@ -215,8 +224,8 @@ private fun ArcNumberList(
     digit: Int,
     radius: Float,
     intervalAngle: Float,
+    offsetY: Float,
     startOffsetAngle: Float = -9 * intervalAngle,
-    offsetY: Float = 200f
 ) {
     require(intervalAngle * maxDigit < 360)
 
@@ -242,7 +251,7 @@ private fun ArcNumberList(
     }
     Box {
         val c = MaterialTheme.colors.secondary.copy(alpha = 0.6f)
-        Canvas(modifier = Modifier.size(24.dp, 24.dp)) {
+        Canvas(Modifier) {
             drawRoundRect(
                 color = c,
                 size = Size(24.dp.toPx(), 24.dp.toPx()),
@@ -259,5 +268,35 @@ private fun ArcNumberList(
                 color = if (it.value == digit) contentColorFor(MaterialTheme.colors.secondary) else Color.Unspecified
             )
         }
+    }
+}
+
+private const val pieSize = 200f
+
+@Composable
+private fun PiProgress(offsetY: Float, totalPercent: Float) {
+    val c = MaterialTheme.colors.secondary.copy(alpha = 0.6f)
+    val angle: Float = animateFloatAsState(
+        targetValue = totalPercent,
+        animationSpec = tween(moveDuration),
+    ).value
+    Canvas(Modifier) {
+        val topLeft = Offset(-(pieSize / 2f).dp.toPx(), (offsetY - pieSize / 2f + 15f).dp.toPx())
+        drawArc(
+            color = Color.LightGray,
+            startAngle = 270f,
+            topLeft = topLeft,
+            size = Size(pieSize.dp.toPx(), pieSize.dp.toPx()),
+            sweepAngle = 180f,
+            useCenter = true
+        )
+        drawArc(
+            color = c,
+            startAngle = 270f + 180f * (1f - angle),
+            topLeft = topLeft,
+            size = Size(pieSize.dp.toPx(), pieSize.dp.toPx()),
+            sweepAngle = 180f * angle,
+            useCenter = true
+        )
     }
 }
