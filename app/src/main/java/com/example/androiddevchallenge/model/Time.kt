@@ -15,16 +15,13 @@
  */
 package com.example.androiddevchallenge.model
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import com.example.androiddevchallenge.ui.util.getOrZero
 
 data class RawTime(val hours: Int, val minutes: Int, val seconds: Int) {
     val totalSeconds: Long
-        get() {
-            return (hours * 60 + minutes) * 60 + seconds.toLong()
-        }
+        get() = (hours * 60 + minutes) * 60 + seconds.toLong()
 
     companion object {
         fun create(stack: List<Int>): RawTime {
@@ -39,16 +36,13 @@ data class RawTime(val hours: Int, val minutes: Int, val seconds: Int) {
 
 class Time(hours: State<Int>, minutes: State<Int>, seconds: State<Int>) {
     companion object {
-        const val TIME_FORMAT = "%d:%02d:%02d"
+        const val TIME_FORMAT = "%02d:%02d:%02d"
     }
     val hours by hours
     val minutes by minutes
     val seconds by seconds
     val totalSeconds: Long
-        get() {
-            Log.d("abab", "h=$hours, m=$minutes, s=$seconds")
-            return (hours * 60 + minutes) * 60 + seconds.toLong()
-        }
+        get() = (hours * 60 + minutes) * 60 + seconds.toLong()
 
     override fun toString(): String = String.format(TIME_FORMAT, hours, minutes, seconds)
 }
