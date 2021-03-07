@@ -108,34 +108,20 @@ private fun CountDown(
     onSetTimeClick: () -> Unit
 ) {
     Column(modifier = modifier) {
-        Box(
-            modifier = modifier
-                .weight(1f)
-        ) {
-            Text(
-                text = "$time",
-                modifier = Modifier.align(Alignment.Center),
-                style = MaterialTheme.typography.h2
-            )
-        }
-        Row(
+        ClockDial(
+            time = time,
             modifier = Modifier
                 .fillMaxWidth()
-        ) {
-            Box(
+                .weight(1f)
+        )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            SetButton(
                 modifier = Modifier
-                    .height(46.dp)
                     .padding(horizontal = 12.dp)
                     .weight(1f)
-                    .align(Alignment.CenterVertically)
-                    .clickable(onClick = onSetTimeClick)
-            ) {
-                Text(
-                    text = "SET",
-                    modifier = Modifier.align(Alignment.Center),
-                    style = MaterialTheme.typography.h6
-                )
-            }
+                    .align(Alignment.CenterVertically),
+                onClick = onSetTimeClick
+            )
             StartOrStopFab(
                 modifier = Modifier
                     .padding(12.dp)
@@ -150,6 +136,21 @@ private fun CountDown(
                     .weight(1f)
             )
         }
+    }
+}
+
+@Composable
+private fun SetButton(modifier: Modifier, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .height(46.dp)
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = "SET",
+            modifier = Modifier.align(Alignment.Center),
+            style = MaterialTheme.typography.h6
+        )
     }
 }
 
@@ -173,6 +174,17 @@ private fun StartOrStopFab(
         Icon(
             imageVector = if (isRunning) Icons.Outlined.Stop else Icons.Outlined.PlayArrow,
             contentDescription = if (isRunning) "stop fab" else "start fab"
+        )
+    }
+}
+
+@Composable
+private fun ClockDial(time: Time, modifier: Modifier) {
+    Box(modifier = modifier) {
+        Text(
+            text = "$time",
+            modifier = Modifier.align(Alignment.Center),
+            style = MaterialTheme.typography.h2
         )
     }
 }
