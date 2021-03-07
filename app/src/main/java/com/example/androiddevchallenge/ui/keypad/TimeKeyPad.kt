@@ -105,7 +105,7 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (RawTime) -> Unit = {}) {
 }
 
 @Composable
-fun KeyPad(modifier: Modifier = Modifier, onClickKey: (Int) -> Unit) {
+private fun KeyPad(modifier: Modifier = Modifier, onClickKey: (Int) -> Unit) {
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -167,14 +167,14 @@ fun KeyPad(modifier: Modifier = Modifier, onClickKey: (Int) -> Unit) {
 }
 
 @Composable
-fun CenterText(text: String, modifier: Modifier, style: TextStyle) {
+private fun CenterText(text: String, modifier: Modifier, style: TextStyle) {
     Box(modifier = modifier) {
         Text(text = text, modifier = Modifier.align(Alignment.Center), style = style)
     }
 }
 
 @Composable
-fun TimeStack(modifier: Modifier = Modifier, stack: List<Int>) {
+private fun TimeStack(modifier: Modifier = Modifier, stack: List<Int>) {
     Row(modifier = modifier) {
         Text(
             text = "${stack.getOrZero(5)}${stack.getOrZero(4)}",

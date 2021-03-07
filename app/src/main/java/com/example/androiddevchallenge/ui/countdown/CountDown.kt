@@ -79,7 +79,7 @@ fun CountDown(
 
     val time by remember { mutableStateOf(Time(hours, minutes, seconds)) }
 
-    ClockDial(
+    CountDown(
         time = time,
         modifier = modifier,
         isRunning = isRunning,
@@ -99,7 +99,7 @@ fun CountDown(
 }
 
 @Composable
-fun ClockDial(
+private fun CountDown(
     time: Time,
     modifier: Modifier = Modifier,
     isRunning: Boolean,
@@ -154,7 +154,7 @@ fun ClockDial(
 }
 
 @Composable
-fun StartOrStopFab(
+private fun StartOrStopFab(
     modifier: Modifier = Modifier,
     isRunning: Boolean,
     onStopClick: () -> Unit,
