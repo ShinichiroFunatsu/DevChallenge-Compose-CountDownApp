@@ -15,6 +15,9 @@
  */
 package com.example.androiddevchallenge.ui.countdown
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,11 +25,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Stop
@@ -39,10 +45,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.model.RawTime
 import com.example.androiddevchallenge.model.Time
 import kotlinx.coroutines.isActive
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun CountDown(
@@ -181,10 +196,68 @@ private fun StartOrStopFab(
 @Composable
 private fun ClockDial(time: Time, modifier: Modifier) {
     Box(modifier = modifier) {
-        Text(
-            text = "$time",
-            modifier = Modifier.align(Alignment.Center),
-            style = MaterialTheme.typography.h2
-        )
+        ArcNumberList(9, time.seconds % 10, 310f, 10f)
+        ArcNumberList(5, time.seconds / 10, 280f, 10f)
+        ArcNumberList(9, time.minutes % 10, 240f, 10f)
+        ArcNumberList(5, time.minutes / 10, 210f, 10f)
+        ArcNumberList(9, time.hours % 10, 170f, 10f)
+        ArcNumberList(9, time.hours / 10, 140f, 10f)
+    }
+}
+
+private const val moveDuration = 700
+
+private data class DigitItem(val value: Int, val x: Float, val y: Float, val angle: Float)
+
+@Composable
+private fun ArcNumberList(
+    maxDigit: Int,
+    digit: Int,
+    radius: Float,
+    intervalAngle: Float,
+    startOffsetAngle: Float = -9 * intervalAngle,
+    offsetY: Float = 200f
+) {
+    require(intervalAngle * maxDigit < 360)
+
+    val offsetAngle: Float = animateFloatAsState(
+        targetValue = ((9 - digit) * intervalAngle),
+        animationSpec = tween(moveDuration),
+    ).value
+
+    var items: List<DigitItem> by remember { mutableStateOf(listOf()) }
+    var digitItem: DigitItem by remember { mutableStateOf(DigitItem(0, 0f, 0f, 0f)) }
+
+    LaunchedEffect(offsetAngle) {
+        val intervalRadian = (intervalAngle * PI / 180.0f)
+        val offsetRadian = (offsetAngle * PI / 180.0f)
+        val startOffsetRadian = (startOffsetAngle * PI / 180.0f)
+        items = (0..maxDigit).mapIndexed { index, i ->
+            val x = cos(startOffsetRadian + offsetRadian + intervalRadian * index) * radius
+            val y = offsetY + sin(startOffsetRadian + offsetRadian + intervalRadian * index) * radius
+            DigitItem(i, x.toFloat(), y.toFloat(), startOffsetAngle + offsetAngle + intervalAngle * i).also {
+                if (index == digit) digitItem = it
+            }
+        }
+    }
+    Box {
+        val c = MaterialTheme.colors.secondary.copy(alpha = 0.6f)
+        Canvas(modifier = Modifier.size(24.dp, 24.dp)) {
+            drawRoundRect(
+                color = c,
+                size = Size(24.dp.toPx(), 24.dp.toPx()),
+                topLeft = Offset((digitItem.x - 7.5f).dp.toPx(), (digitItem.y - 1f).dp.toPx()),
+                cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx())
+            )
+        }
+        items.forEach {
+            Text(
+                text = "${it.value}",
+                modifier = Modifier
+                    .offset { IntOffset((it.x * density).toInt(), (it.y * density).toInt()) }
+                    .rotate(it.angle),
+                color = if (it.value == digit) contentColorFor(MaterialTheme.colors.secondary) else Color.Unspecified
+            )
+        }
     }
 }
