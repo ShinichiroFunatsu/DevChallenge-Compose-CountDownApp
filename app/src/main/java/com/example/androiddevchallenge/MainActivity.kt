@@ -18,6 +18,7 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -65,6 +66,7 @@ fun MyApp() {
             sheetContent = {
                 TimeKeyPad(
                     modifier = Modifier
+                        .clickable { }
                         .padding(horizontal = 12.dp)
                         .fillMaxSize(),
                     onKeyClick = { time ->

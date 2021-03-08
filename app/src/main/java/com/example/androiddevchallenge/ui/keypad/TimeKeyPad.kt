@@ -50,7 +50,6 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}
     Column(
         modifier = modifier,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -62,18 +61,17 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 imageVector = Icons.Outlined.Backspace,
-                contentDescription = "back icon",
+                contentDescription = "backspace icon",
                 modifier = Modifier
-                    .align(Alignment.CenterVertically)
                     .clickable(onClick = { timeStack.pop() })
-                    .padding(4.dp)
+                    .height(46.dp)
+                    .padding(horizontal = 10.dp)
+                    .align(Alignment.CenterVertically)
 
             )
             Spacer(modifier = Modifier.weight(1f))
         }
-        Spacer(modifier = Modifier.weight(1f))
         Divider()
-        Spacer(modifier = Modifier.weight(1f))
         KeyPad(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,11 +83,9 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}
                 }
             },
         )
-        Spacer(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp)
         ) {
             FloatingActionButton(
                 modifier = Modifier.align(Alignment.Center),
@@ -104,7 +100,6 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}
                 )
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 
@@ -119,7 +114,7 @@ private fun KeyPad(modifier: Modifier = Modifier, onClickKey: (Int) -> Unit) {
                     text = "$it",
                     modifier = Modifier
                         .weight(1f)
-                        .height(80.dp)
+                        .height(46.dp)
                         .clickable { onClickKey(it) },
                     style = MaterialTheme.typography.h5
                 )
@@ -133,7 +128,7 @@ private fun KeyPad(modifier: Modifier = Modifier, onClickKey: (Int) -> Unit) {
                     text = "$it",
                     modifier = Modifier
                         .weight(1f)
-                        .height(80.dp)
+                        .height(46.dp)
                         .clickable { onClickKey(it) },
                     style = MaterialTheme.typography.h5
                 )
@@ -147,7 +142,7 @@ private fun KeyPad(modifier: Modifier = Modifier, onClickKey: (Int) -> Unit) {
                     text = "$it",
                     modifier = Modifier
                         .weight(1f)
-                        .height(80.dp)
+                        .height(46.dp)
                         .clickable { onClickKey(it) },
                     style = MaterialTheme.typography.h5
                 )
@@ -161,7 +156,7 @@ private fun KeyPad(modifier: Modifier = Modifier, onClickKey: (Int) -> Unit) {
                 text = "0",
                 modifier = Modifier
                     .weight(1f)
-                    .height(80.dp)
+                    .height(46.dp)
                     .clickable { onClickKey(0) },
                 style = MaterialTheme.typography.h5
             )
