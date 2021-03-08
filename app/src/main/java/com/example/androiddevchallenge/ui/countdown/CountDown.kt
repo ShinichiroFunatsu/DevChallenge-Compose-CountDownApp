@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -62,17 +61,20 @@ import kotlin.math.sin
 @Composable
 fun CountDown(
     defaultRawTime: RawTime,
+    startCountDown: Boolean,
     modifier: Modifier = Modifier,
     onSetTimeClick: () -> Unit = {}
 ) {
-    var totalTime by remember { mutableStateOf(defaultRawTime.totalSeconds) }
-    var startTime by remember { mutableStateOf(0L) }
-    var timeLeft by remember { mutableStateOf(totalTime) }
+    var isRunning by remember(startCountDown) { mutableStateOf(startCountDown) }
+
+    var totalTime by remember(defaultRawTime) { mutableStateOf(defaultRawTime.totalSeconds) }
+    var startTime by remember(defaultRawTime) { mutableStateOf(0L) }
+    var timeLeft by remember(defaultRawTime) { mutableStateOf(totalTime) }
     val seconds = remember { mutableStateOf(0) }
     val minutes = remember { mutableStateOf(0) }
     val hours = remember { mutableStateOf(0) }
-    var isRunning by remember { mutableStateOf(true) }
 
+    // count down action per frame.
     LaunchedEffect(isRunning) {
         while (isActive && timeLeft > 0 && isRunning) {
             withFrameMillis {
@@ -90,6 +92,13 @@ fun CountDown(
                 }
             }
         }
+    }
+
+    // digit move action on setting time changed.
+    LaunchedEffect(defaultRawTime) {
+        seconds.value = timeLeft.toInt() % 60
+        minutes.value = (timeLeft - seconds.value).toInt() / 60 % 60
+        hours.value = (timeLeft - seconds.value - minutes.value * 60).toInt() / 3600
     }
 
     val time by remember { mutableStateOf(Time(hours, minutes, seconds)) }

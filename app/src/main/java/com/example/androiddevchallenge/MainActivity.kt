@@ -18,14 +18,20 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +39,7 @@ import com.example.androiddevchallenge.model.RawTime
 import com.example.androiddevchallenge.ui.countdown.CountDown
 import com.example.androiddevchallenge.ui.keypad.TimeKeyPad
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,32 +53,43 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Composable
+@OptIn(ExperimentalMaterialApi::class)
 fun MyApp() {
-    val (isTimeEdit, setIsTimeEdit) = remember { mutableStateOf(true) }
-    val (time, setTime) = remember { mutableStateOf(RawTime(0, 0, 0)) }
     Surface(color = MaterialTheme.colors.background) {
-        Crossfade(targetState = isTimeEdit) {
-            if (it) {
+        var timeSetting by remember { mutableStateOf(RawTime(0, 0, 0)) }
+        var isStartCountDown by remember { mutableStateOf(false) }
+        val state = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+        val scope = rememberCoroutineScope()
+        ModalBottomSheetLayout(
+            sheetState = state,
+            sheetContent = {
                 TimeKeyPad(
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .fillMaxSize(),
-                    onStart = { time ->
-                        setIsTimeEdit(false)
-                        setTime(time)
+                    onKeyClick = { time ->
+                        timeSetting = time
                     },
-                )
-            } else {
-                CountDown(
-                    defaultRawTime = time,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    onSetTimeClick = {
-                        setIsTimeEdit(true)
-                        setTime(RawTime(0, 0, 0))
+                    onStartClick = {
+                        scope.launch {
+                            state.hide()
+                            isStartCountDown = true
+                        }
                     }
                 )
             }
+        ) {
+            CountDown(
+                defaultRawTime = timeSetting,
+                modifier = Modifier
+                    .fillMaxSize(),
+                startCountDown = isStartCountDown,
+                onSetTimeClick = {
+                    timeSetting = RawTime(0, 0, 0)
+                    scope.launch { state.show() }
+                    isStartCountDown = false
+                }
+            )
         }
     }
 }

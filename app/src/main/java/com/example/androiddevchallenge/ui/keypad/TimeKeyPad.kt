@@ -45,7 +45,7 @@ import com.example.androiddevchallenge.ui.util.pop
 import com.example.androiddevchallenge.ui.util.push
 
 @Composable
-fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (RawTime) -> Unit = {}) {
+fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}, onStartClick: () -> Unit) {
     val timeStack = remember { mutableStateListOf<Int>() }
     Column(
         modifier = modifier,
@@ -81,6 +81,7 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (RawTime) -> Unit = {}) {
             onClickKey = {
                 if (timeStack.size < 6 && (timeStack.size != 0 || it != 0)) {
                     timeStack.push(it)
+                    onKeyClick(RawTime.create(timeStack))
                 }
             },
         )
@@ -92,7 +93,10 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onStart: (RawTime) -> Unit = {}) {
         ) {
             FloatingActionButton(
                 modifier = Modifier.align(Alignment.Center),
-                onClick = { onStart(RawTime.create(timeStack)) }
+                onClick = {
+                    onStartClick()
+                    timeStack.clear()
+                }
             ) {
                 Icon(
                     imageVector = Icons.Outlined.PlayArrow,
