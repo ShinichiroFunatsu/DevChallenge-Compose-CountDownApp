@@ -18,15 +18,12 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,14 +56,22 @@ fun MyApp() {
     Surface(color = MaterialTheme.colors.background) {
         var timeSetting by remember { mutableStateOf(RawTime(0, 0, 0)) }
         var isStartCountDown by remember { mutableStateOf(false) }
-        val state = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
         val scope = rememberCoroutineScope()
-        ModalBottomSheetLayout(
-            sheetState = state,
-            sheetContent = {
+        Box() {
+            if (isStartCountDown) {
+                CountDown(
+                    defaultRawTime = timeSetting,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    startCountDown = isStartCountDown,
+                    onSetTimeClick = {
+                        timeSetting = RawTime(0, 0, 0)
+                        isStartCountDown = false
+                    }
+                )
+            } else {
                 TimeKeyPad(
                     modifier = Modifier
-                        .clickable { }
                         .padding(horizontal = 12.dp)
                         .fillMaxSize(),
                     onSettingTimeChanged = { time ->
@@ -74,24 +79,11 @@ fun MyApp() {
                     },
                     onStartClick = {
                         scope.launch {
-                            state.hide()
                             isStartCountDown = true
                         }
                     }
                 )
             }
-        ) {
-            CountDown(
-                defaultRawTime = timeSetting,
-                modifier = Modifier
-                    .fillMaxSize(),
-                startCountDown = isStartCountDown,
-                onSetTimeClick = {
-                    timeSetting = RawTime(0, 0, 0)
-                    scope.launch { state.show() }
-                    isStartCountDown = false
-                }
-            )
         }
     }
 }
