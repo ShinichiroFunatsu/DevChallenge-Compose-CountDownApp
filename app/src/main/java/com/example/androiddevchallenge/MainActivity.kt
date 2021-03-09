@@ -18,7 +18,6 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -28,16 +27,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.model.RawTime
+import com.example.androiddevchallenge.ui.bottomsheet.FakeBottomSheet
+import com.example.androiddevchallenge.ui.bottomsheet.FakeBottomSheetValue
 import com.example.androiddevchallenge.ui.countdown.CountDown
 import com.example.androiddevchallenge.ui.keypad.TimeKeyPad
 import com.example.androiddevchallenge.ui.theme.MyTheme
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,20 +55,9 @@ fun MyApp() {
     Surface(color = MaterialTheme.colors.background) {
         var timeSetting by remember { mutableStateOf(RawTime(0, 0, 0)) }
         var isStartCountDown by remember { mutableStateOf(false) }
-        val scope = rememberCoroutineScope()
-        Box() {
-            if (isStartCountDown) {
-                CountDown(
-                    defaultRawTime = timeSetting,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    startCountDown = isStartCountDown,
-                    onSetTimeClick = {
-                        timeSetting = RawTime(0, 0, 0)
-                        isStartCountDown = false
-                    }
-                )
-            } else {
+        val sheetValue = remember { mutableStateOf(FakeBottomSheetValue.Hidden) }
+        FakeBottomSheet(
+            sheetContent = {
                 TimeKeyPad(
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
@@ -78,12 +66,24 @@ fun MyApp() {
                         timeSetting = time
                     },
                     onStartClick = {
-                        scope.launch {
-                            isStartCountDown = true
-                        }
+                        sheetValue.value = FakeBottomSheetValue.Hidden
+                        isStartCountDown = true
                     }
                 )
-            }
+            },
+            sheetValue = sheetValue,
+        ) {
+            CountDown(
+                defaultRawTime = timeSetting,
+                modifier = Modifier
+                    .fillMaxSize(),
+                startCountDown = isStartCountDown,
+                onSetTimeClick = {
+                    isStartCountDown = false
+                    sheetValue.value = FakeBottomSheetValue.Show
+                    timeSetting = RawTime(0, 0, 0)
+                }
+            )
         }
     }
 }
