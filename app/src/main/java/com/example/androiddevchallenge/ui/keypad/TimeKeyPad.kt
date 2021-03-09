@@ -45,7 +45,11 @@ import com.example.androiddevchallenge.ui.util.pop
 import com.example.androiddevchallenge.ui.util.push
 
 @Composable
-fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}, onStartClick: () -> Unit) {
+fun TimeKeyPad(
+    modifier: Modifier = Modifier,
+    onSettingTimeChanged: (RawTime) -> Unit = {},
+    onStartClick: () -> Unit
+) {
     val timeStack = remember { mutableStateListOf<Int>() }
     Column(
         modifier = modifier,
@@ -63,11 +67,13 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}
                 imageVector = Icons.Outlined.Backspace,
                 contentDescription = "backspace icon",
                 modifier = Modifier
-                    .clickable(onClick = { timeStack.pop() })
+                    .clickable {
+                        timeStack.pop()
+                        onSettingTimeChanged(RawTime.create(timeStack))
+                    }
                     .height(46.dp)
                     .padding(horizontal = 10.dp)
                     .align(Alignment.CenterVertically)
-
             )
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -79,7 +85,7 @@ fun TimeKeyPad(modifier: Modifier = Modifier, onKeyClick: (RawTime) -> Unit = {}
             onClickKey = {
                 if (timeStack.size < 6 && (timeStack.size != 0 || it != 0)) {
                     timeStack.push(it)
-                    onKeyClick(RawTime.create(timeStack))
+                    onSettingTimeChanged(RawTime.create(timeStack))
                 }
             },
         )

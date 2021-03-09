@@ -69,7 +69,7 @@ fun MyApp() {
                         .clickable { }
                         .padding(horizontal = 12.dp)
                         .fillMaxSize(),
-                    onKeyClick = { time ->
+                    onSettingTimeChanged = { time ->
                         timeSetting = time
                     },
                     onStartClick = {
