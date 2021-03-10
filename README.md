@@ -11,6 +11,8 @@ Jetpack Compose single page count down app.
 - I respect and inspired the code [AnimatedClockDemo.kt](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/animation/animation/integration-tests/animation-demos/src/main/java/androidx/compose/animation/demos/AnimatedClockDemo.kt).
 - I made FakeBottomSheet to solve test failure problem using ModalBottomSheetLayout!!
 
+<img width="810" alt="NoSuchElementException on workflow test" src="https://user-images.githubusercontent.com/43738854/110563354-8d3f3100-818e-11eb-8561-741fa5efb321.png">
+
 ## :camera_flash: Screenshots
 <img src="/results/screenshot_1.png" width="260">&emsp;<img src="/results/screenshot_2.png" width="260">
 
